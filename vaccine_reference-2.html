@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ワクチン早見表 - 松口内科・循環器内科クリニック</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sans-serif;background:#f5f5f0;color:#1a1a1a;font-size:16px}
+.container{max-width:900px;margin:0 auto;padding:16px}
+.hdr{background:#fff;border-radius:12px;padding:16px 20px;margin-bottom:14px;border:.5px solid #e0dfd8;display:flex;align-items:center;gap:12px}
+.hdr-icon{width:40px;height:40px;background:#E6F1FB;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:17px;font-weight:600;color:#1a1a1a}
+.hdr p{font-size:12px;color:#888;margin-top:2px}
+.controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.search-wrap{position:relative;flex:1;min-width:160px}
+.search-wrap input{width:100%;padding:9px 12px 9px 34px;font-size:14px;border:.5px solid #ccc;border-radius:22px;background:#fff;color:#1a1a1a;outline:none}
+.search-wrap input:focus{border-color:#378ADD}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:#999}
+.fb{font-size:13px;padding:7px 15px;border-radius:22px;border:.5px solid #ccc;background:#fff;color:#666;cursor:pointer;font-family:inherit}
+.fb.on{background:#E6F1FB;border-color:#378ADD;color:#0C447C;font-weight:600}
+.cnt{font-size:12px;color:#888;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px}
+.card{background:#fff;border:.5px solid #e0dfd8;border-radius:12px;padding:14px 16px;cursor:pointer;transition:border-color .15s}
+.card:hover{border-color:#aaa}
+.card.open{border-color:#378ADD;border-width:1.5px}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.vname{font-size:15px;font-weight:600;color:#1a1a1a;line-height:1.3}
+.vsub{font-size:11px;color:#888;margin-top:2px}
+.badges{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.badge{font-size:11px;padding:2px 9px;border-radius:10px;font-weight:500}
+.b-appt{background:#FAEEDA;color:#633806}
+.b-free{background:#E6F1FB;color:#0C447C}
+.b-sub{background:#E1F5EE;color:#085041}
+.price-col{text-align:right;flex-shrink:0}
+.price{font-size:18px;font-weight:700;color:#185FA5}
+.pnote{font-size:11px;color:#888;margin-top:1px}
+.div{border:none;border-top:.5px solid #e8e8e4;margin:10px 0}
+.sbox{background:#f8f8f5;border-radius:8px;padding:10px 12px}
+.slabel{font-size:11px;font-weight:700;color:#0F6E56;margin-bottom:5px;display:flex;align-items:center;gap:4px;letter-spacing:.3px}
+.srow{font-size:12px;color:#1a1a1a;line-height:1.85}
+.srow em{color:#888;font-style:normal}
+.snone{font-size:12px;color:#888}
+.dmore{display:none;margin-top:8px}
+.card.open .dmore{display:block}
+.dtgl{font-size:12px;color:#378ADD;margin-top:8px;display:flex;align-items:center;gap:3px}
+.memo{font-size:12px;color:#666;line-height:1.7}
+/* 帯状疱疹 */
+.age-grid{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0}
+.age-pill{font-size:12px;padding:3px 10px;border-radius:12px;font-weight:600;background:#FBEAF0;color:#4B1528;border:.5px solid #ED93B1}
+.age-note{font-size:11px;color:#a05010;margin-top:3px;line-height:1.6;background:#FAEEDA;border-radius:6px;padding:4px 8px}
+.hz-period-table{width:100%;border-collapse:collapse;margin-top:6px;font-size:12px}
+.hz-period-table th{background:#f0ede8;padding:5px 8px;text-align:left;font-weight:600;color:#555;border:.5px solid #ddd}
+.hz-period-table td{padding:6px 8px;border:.5px solid #e8e5e0;vertical-align:top;line-height:1.6}
+.hz-period-table tr.birthday td{background:#FBEAF0}
+.hz-period-table tr.nendo td{background:#E1F5EE}
+.period-badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;font-weight:600;margin-right:4px}
+.pb-birthday{background:#F4C0D1;color:#4B1528}
+.pb-nendo{background:#9FE1CB;color:#04342C}
+.hz-compare{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.hz-col{border-radius:8px;padding:9px 11px}
+.hz-col.shin{background:#E1F5EE;border:.5px solid #5DCAA5}
+.hz-col.biken{background:#E6F1FB;border:.5px solid #85B7EB}
+.hz-col-name{font-size:11px;font-weight:700;margin-bottom:5px}
+.hz-col.shin .hz-col-name{color:#085041}
+.hz-col.biken .hz-col-name{color:#0C447C}
+.hz-row{font-size:11px;line-height:1.8;color:#1a1a1a}
+.hz-row em{color:#888;font-style:normal}
+.hz-price-after{font-size:14px;font-weight:700}
+.hz-col.shin .hz-price-after{color:#0F6E56}
+.hz-col.biken .hz-price-after{color:#185FA5}
+.hz-price-before{font-size:11px;color:#aaa;text-decoration:line-through}
+.subsidy-cost-big{font-size:14px;font-weight:700;color:#0F6E56}
+.empty{text-align:center;padding:2rem;color:#888;font-size:14px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="hdr">
+    <div class="hdr-icon">💉</div>
+    <div>
+      <h1>ワクチン早見表</h1>
+      <p>松口内科・循環器内科クリニック ／ 価格税込・自費 ／ 福岡市助成情報含む</p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="srch" placeholder="ワクチン名で検索..." oninput="render()">
+    </div>
+    <button class="fb on" onclick="setF('all',this)">すべて</button>
+    <button class="fb" onclick="setF('sub',this)">助成あり</button>
+    <button class="fb" onclick="setF('appt',this)">要予約</button>
+  </div>
+  <div class="cnt" id="cnt"></div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const V=[
+
+  {
+    id:2,name:"帯状疱疹（シングリックス）",sub:"組換えワクチン・2回接種",
+    tags:"帯状ほうしん 帯状ヘルペス ヘルペス zoster shingles シングリックス",
+    price:38000,pnote:"2回分（通常価格）",appt:true,isHerpes:true,
+    subsidy:{yes:true,
+      targetAges:[50,55,60,65,70,75,80,85,90,95,100],
+      period:"令和6年4月1日〜（福岡市任意接種助成）",
+      cost:"助成後 24,000円（2回分）",costBefore:"38,000円（2回分）",
+      note:"福岡市任意予防接種助成 ／ 5歳刻みの年齢のみ対象"},
+    memo:"有効期間11年以上・予防効果約97%（50歳以上対象の海外データ）。免疫不全者も接種可。📅 接種間隔：2回目は1回目から2ヶ月以上あけて接種。💴 お支払い：助成対象者は1回ごとのお支払い／自費の方は初回に2回分一括払い。"
+  },
+  {
+    id:3,name:"帯状疱疹（ビケン）",sub:"生ワクチン・1回接種",
+    tags:"帯状ほうしん 帯状ヘルペス ヘルペス zoster shingles ビケン",
+    price:8000,pnote:"1回（通常価格）",appt:true,isHerpesBiken:true,
+    subsidy:{yes:true,
+      targetAges:[50,55,60,65,70,75,80,85,90,95,100],
+      period:"令和6年4月1日〜（福岡市任意接種助成）",
+      cost:"助成後 4,900円（1回）",costBefore:"8,000円（1回）",
+      note:"福岡市任意予防接種助成 ／ 5歳刻みの年齢のみ対象"},
+    memo:"予防効果約51%・持続5年程度。1回で済む。免疫不全の方は接種不可。"
+  },
+  {
+    id:4,name:"肺炎球菌（プレベナー13）",sub:"13価結合型",
+    tags:"肺炎 肺炎球菌 肺炎菌 pneumonia プレベナー",
+    price:11000,pnote:"1回",appt:true,
+    subsidy:{yes:true,
+      target:"65歳（当該年度に65歳になる方のみ）",
+      period:"4月1日〜3月31日",cost:"自己負担 5,900円",note:"福岡市定期接種（65歳のみ対象）"},
+    memo:"免疫機能低下者・高齢者に適応あり。65歳で助成、それ以外は自費。"
+  },
+  {
+    id:5,name:"肺炎球菌（キャップバックス）",sub:"15価結合型",
+    tags:"肺炎 肺炎球菌 肺炎菌 pneumonia キャップバックス",
+    price:12000,pnote:"1回",appt:true,
+    subsidy:{yes:false,note:"助成なし（自費のみ）"},
+    memo:"5年ごとの接種が目安。自費のみ。"
+  },
+  {
+    id:6,name:"RSウイルスワクチン",sub:"（アブリスボ等）",
+    tags:"RS RSウイルス 呼吸器 気管支炎 アブリスボ",
+    price:25000,pnote:"1回",appt:true,
+    subsidy:{yes:false,note:"助成なし（自費のみ）"},
+    memo:"高齢者に推奨。1回接種。"
+  },
+  {
+    id:7,name:"インフルエンザ",sub:"（毎年接種）",
+    tags:"流感 インフル",
+    price:2500,pnote:"1回",appt:false,
+    subsidy:{yes:true,
+      target:"65歳以上 / 60〜64歳で心臓・腎臓・呼吸器機能に重篤な障害のある方",
+      period:"10月1日〜1月31日ごろ",cost:"自己負担 1,500円（残額公費負担）",note:"福岡市定期接種"},
+    memo:"予約不要。13歳未満は2回接種。毎年10月ごろ開始。"
+  },
+  {
+    id:14,name:"新型コロナ（ファイザー）",sub:"",
+    tags:"コロナ covid covid19 新型コロナウイルス corona ファイザー",
+    price:15000,pnote:"1回（自費）",appt:true,
+    subsidy:{yes:true,
+      target:"65歳以上 / 60〜64歳で重篤な基礎疾患のある方",
+      period:"秋冬（時期は厚労省告示による）",cost:"自己負担 3,000〜7,000円程度",note:"令和6年度より定期接種に移行。対象外は自費15,000円"},
+    memo:"定期接種対象外は自費15,000円。最新株対応ワクチンを使用。"
+  },
+  {
+    id:8,name:"MRワクチン（風しん・麻しん）",sub:"",
+    tags:"風疹 麻疹 はしか 風しん 麻しん rubella measles MR",
+    price:7000,pnote:"1回",appt:true,
+    subsidy:{yes:true,
+      target:"①妊娠希望者（妊婦除く）②妊娠希望者・妊婦の配偶者／同居者　※福岡市在住・風しん抗体が低い方",
+      period:"令和8年4月1日〜令和9年3月31日",
+      cost:"MR混合：自己負担 3,000円 ／ 風しん単独：2,000円",
+      note:"風しん抗体検査は無料 ／ 助成は1人1回限り",
+      caution:"⚠️ 当院は混合（MR）のみ取り扱い　風しん単体ワクチンは扱いなし"},
+    memo:"接種前に風しん抗体検査（無料）を受けることを推奨。抗体が低い場合に接種対象。"
+  },
+  {
+    id:9,name:"水痘（みずぼうそう）",sub:"生ワクチン",
+    tags:"水ぼうそう 水疱瘡 みずほうそう varicella chickenpox",
+    price:8000,pnote:"1回",appt:true,
+    subsidy:{yes:false,note:"成人への公費助成なし（小児定期接種のみ）"},
+    memo:"罹患歴不明な成人に推奨。2回接種が望ましい。免疫不全の方は接種不可。"
+  },
+  {
+    id:10,name:"B型肝炎ワクチン",sub:"",
+    tags:"B肝 肝炎 B型肝炎 HBV hepatitis",
+    price:5000,pnote:"1回（3回接種）",appt:true,
+    subsidy:{yes:false,note:"成人への公費助成なし（小児定期接種のみ）"},
+    memo:"0・1・6ヶ月の3回接種。HBs抗体検査を先に確認推奨。"
+  },
+  {
+    id:11,name:"ムンプス（おたふくかぜ）",sub:"生ワクチン",
+    tags:"おたふく おたふくかぜ 流行性耳下腺炎 mumps",
+    price:7000,pnote:"1回",appt:true,
+    subsidy:{yes:false,note:"公費助成なし（任意接種）"},
+    memo:"小児2回接種推奨。成人も罹患歴不明なら推奨。精巣炎・難聴予防。"
+  },
+  {
+    id:12,name:"破傷風トキソイド",sub:"",
+    tags:"破傷風 テタヌス tetanus 外傷",
+    price:2000,pnote:"1回",appt:false,
+    subsidy:{yes:false,note:"公費助成なし"},
+    memo:"外傷後の追加接種や10年ごとのブースター。"
+  },
+  {
+    id:13,name:"日本脳炎ワクチン",sub:"",
+    tags:"日本脳炎 脳炎 JE encephalitis",
+    price:7000,pnote:"1回",appt:true,
+    subsidy:{yes:false,note:"成人への助成なし（小児定期接種のみ）"},
+    memo:"東南アジア渡航者・農村部在住者に推奨。"
+  }
+];
+
+let flt='all';
+function setF(f,btn){
+  flt=f;
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+
+function subsidyBlock(v){
+  const s=v.subsidy;
+  if(!s.yes) return `<div class="snone">— ${s.note}</div>`;
+  if(v.isHerpes||v.isHerpesBiken){
+    return `<div class="slabel">🏦 福岡市任意接種助成あり　<span style="font-size:11px;font-weight:400;color:#0F6E56">令和6年4月1日〜</span></div>
+      <div class="srow" style="margin-bottom:8px"><em>費用：</em><span class="subsidy-cost-big">${s.cost}</span>　<span class="hz-price-before">${s.costBefore}</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="background:#FBEAF0;border:.5px solid #ED93B1;border-radius:8px;padding:8px 10px">
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px">
+            <span class="age-pill" style="display:inline-block">50歳</span>
+            <span class="age-pill" style="display:inline-block">55歳</span>
+            <span class="age-pill" style="display:inline-block">60歳</span>
+          </div>
+          <div style="font-size:12px;color:#1a1a1a;line-height:1.7">
+            <span class="period-badge pb-birthday">誕生日基準</span>
+            誕生日当日 〜 <strong>翌年の誕生日前日</strong>まで
+          </div>
+        </div>
+        <div style="background:#EAF3DE;border:.5px solid #639922;border-radius:8px;padding:8px 10px">
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px">
+            <span class="age-pill" style="display:inline-block;background:#C0DD97;color:#173404;border-color:#639922">65歳</span>
+            <span class="age-pill" style="display:inline-block;background:#C0DD97;color:#173404;border-color:#639922">70歳</span>
+            <span class="age-pill" style="display:inline-block;background:#C0DD97;color:#173404;border-color:#639922">75歳</span>
+            <span class="age-pill" style="display:inline-block;background:#C0DD97;color:#173404;border-color:#639922">80歳</span>
+            <span class="age-pill" style="display:inline-block;background:#C0DD97;color:#173404;border-color:#639922">85歳</span>
+            <span class="age-pill" style="display:inline-block;background:#C0DD97;color:#173404;border-color:#639922">90歳</span>
+            <span class="age-pill" style="display:inline-block;background:#C0DD97;color:#173404;border-color:#639922">95歳</span>
+            <span class="age-pill" style="display:inline-block;background:#C0DD97;color:#173404;border-color:#639922">100歳</span>
+          </div>
+          <div style="font-size:12px;color:#1a1a1a;line-height:1.7">
+            <span class="period-badge pb-nendo">年度内</span>
+            <strong>その年度内（4月1日〜3月31日）に該当年齢になる方</strong>が対象<br>
+            接種期間：<strong>4月1日〜3月31日</strong>
+          </div>
+        </div>
+      </div>
+      <div class="age-note" style="margin-top:6px">⚠️ 今年度に上記年齢になる方のみ対象 ／ 助成は1種類につき1回限り</div>`;
+  }
+  return `<div class="slabel">🏦 福岡市助成あり</div>
+    <div class="srow"><em>対象：</em>${s.target}</div>
+    <div class="srow"><em>期間：</em>${s.period}</div>
+    <div class="srow"><em>費用：</em><strong>${s.cost}</strong></div>
+    <div class="srow" style="font-size:11px;color:#888;margin-top:2px">${s.note}</div>
+    ${s.caution?`<div style="margin-top:8px;padding:8px 10px;background:#FAEEDA;border-radius:8px;font-size:14px;font-weight:700;color:#7B3500;line-height:1.6">${s.caution}</div>`:''}
+  `;
+}
+
+function herpesCompare(){
+  return `<div style="margin-top:10px">
+    <div style="font-size:11px;font-weight:600;color:#888;margin-bottom:5px">シングリックス vs ビケン 比較</div>
+    <div class="hz-compare">
+      <div class="hz-col shin">
+        <div class="hz-col-name">シングリックス（組換え）</div>
+        <div class="hz-row"><em>接種：</em>2回（2ヶ月以上あけて）</div>
+        <div class="hz-row"><em>効果：</em>約97%</div>
+        <div class="hz-row"><em>持続：</em>11年以上</div>
+        <div class="hz-row"><em>助成後：</em><span class="hz-price-after">24,000円</span></div>
+        <div class="hz-row"><span class="hz-price-before">通常38,000円（2回分）</span></div>
+      </div>
+      <div class="hz-col biken">
+        <div class="hz-col-name">ビケン（生ワクチン）</div>
+        <div class="hz-row"><em>接種：</em>1回</div>
+        <div class="hz-row"><em>効果：</em>約51%</div>
+        <div class="hz-row"><em>持続：</em>5年程度</div>
+        <div class="hz-row"><em>助成後：</em><span class="hz-price-after">4,900円</span></div>
+        <div class="hz-row"><span class="hz-price-before">通常8,000円</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function render(){
+  const q=document.getElementById('srch').value.toLowerCase();
+  let list=V.filter(v=>(v.name+v.sub+(v.tags||'')).toLowerCase().includes(q));
+  if(flt==='sub') list=list.filter(v=>v.subsidy.yes);
+  if(flt==='appt') list=list.filter(v=>v.appt);
+  document.getElementById('cnt').textContent=list.length+' 件';
+  if(!list.length){
+    document.getElementById('grid').innerHTML='<div class="empty">該当なし</div>';
+    return;
+  }
+  document.getElementById('grid').innerHTML=list.map(v=>`
+    <div class="card" id="c${v.id}" onclick="tog(${v.id})">
+      <div class="card-top">
+        <div>
+          <div class="vname">${v.name}</div>
+          ${v.sub?`<div class="vsub">${v.sub}</div>`:''}
+          <div class="badges">
+            ${v.appt
+              ?'<span class="badge b-appt">📅 要予約</span>'
+              :'<span class="badge b-free">🚶 予約不要</span>'}
+            ${v.subsidy.yes?'<span class="badge b-sub">🏦 助成あり</span>':''}
+          </div>
+        </div>
+        <div class="price-col">
+          <div class="price">¥${v.price.toLocaleString()}</div>
+          <div class="pnote">${v.pnote}</div>
+        </div>
+      </div>
+      <hr class="div">
+      <div class="sbox">${subsidyBlock(v)}</div>
+      <div class="dmore">
+        <hr class="div">
+        <div class="memo">ℹ️ ${v.memo}</div>
+        ${(v.isHerpes||v.isHerpesBiken)?herpesCompare():''}
+      </div>
+      <div class="dtgl">▼ 詳細・メモを見る</div>
+    </div>
+  `).join('');
+}
+function tog(id){document.getElementById('c'+id).classList.toggle('open')}
+render();
+</script>
+</body>
+</html>
