@@ -85,10 +85,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
   </div>
 
   <div class="controls">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="srch" placeholder="ワクチン名で検索..." oninput="render()">
-    </div>
     <button class="fb on" onclick="setF('all',this)">すべて</button>
     <button class="fb" onclick="setF('sub',this)">助成あり</button>
     <button class="fb" onclick="setF('appt',this)">要予約</button>
@@ -99,7 +95,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
 
 <script>
 const V=[
-
   {
     id:2,name:"帯状疱疹（シングリックス）",sub:"組換えワクチン・2回接種",
     tags:"帯状ほうしん 帯状ヘルペス ヘルペス zoster shingles シングリックス",
@@ -109,7 +104,7 @@ const V=[
       period:"令和6年4月1日〜（福岡市任意接種助成）",
       cost:"助成後 24,000円（2回分）",costBefore:"38,000円（2回分）",
       note:"福岡市任意予防接種助成 ／ 5歳刻みの年齢のみ対象"},
-    memo:"有効期間11年以上・予防効果約97%（50歳以上対象の海外データ）。2回接種（2ヶ月以上あけて接種）。免疫不全者も接種可。"
+    memo:"有効期間11年以上・予防効果約97%（50歳以上対象の海外データ）。免疫不全者も接種可。📅 接種間隔：2回目は1回目から2ヶ月以上あけて接種。💴 お支払い：助成対象者は1回ごとのお支払い／自費の方は初回に2回分一括払い。"
   },
   {
     id:3,name:"帯状疱疹（ビケン）",sub:"生ワクチン・1回接種",
@@ -139,11 +134,26 @@ const V=[
     memo:"5年ごとの接種が目安。自費のみ。"
   },
   {
-    id:6,name:"RSウイルスワクチン",sub:"（アブリスボ等）",
-    tags:"RS RSウイルス 呼吸器 気管支炎 アブリスボ",
-    price:25000,pnote:"1回",appt:true,
-    subsidy:{yes:false,note:"助成なし（自費のみ）"},
-    memo:"高齢者に推奨。1回接種。"
+    id:15,name:"HPVワクチン（シルガード9）",sub:"子宮頸がん予防・9価",
+    tags:"子宮頸がん HPV ヒトパピローマ シルガード 子宮頸癌 cervical cancer",
+    price:27500,pnote:"1回（税込）",appt:true,isHPV:true,
+    subsidy:{yes:true,
+      target:"小学6年〜高校1年相当の女子（定期接種）",
+      period:"定期接種期間内",cost:"無料（定期接種対象者）",
+      note:"定期接種対象外の方は自費。詳しくはお問い合わせください"},
+    memo:"9価ワクチン（シルガード9）。子宮頸がんの原因となるHPVの90%以上を予防。\n\n【接種スケジュール】1年以内に規定回数の接種を終えることが望ましい。\n・1回目と2回目は少なくとも5か月以上あける（5か月未満の場合は3回接種が必要）。\n・2回目・3回目が所定のタイミングでできない場合：2回目は1回目から1か月以上、3回目は2回目から3か月以上あける。\n・接種する年齢によって回数・タイミングが異なるため、詳しくはご相談ください。"
+  },
+  {
+    id:8,name:"MRワクチン（風しん・麻しん）",sub:"",
+    tags:"風疹 麻疹 はしか 風しん 麻しん rubella measles MR",
+    price:7000,pnote:"1回",appt:true,
+    subsidy:{yes:true,
+      target:"①妊娠希望者（妊婦除く）②妊娠希望者・妊婦の配偶者／同居者　※福岡市在住・風しん抗体が低い方",
+      period:"令和8年4月1日〜令和9年3月31日",
+      cost:"MR混合：自己負担 3,000円 ／ 風しん単独：2,000円",
+      note:"風しん抗体検査は無料 ／ 助成は1人1回限り",
+      caution:"⚠️ 当院は混合（MR）のみ取り扱い　風しん単体ワクチンは扱いなし"},
+    memo:"接種前に風しん抗体検査（無料）を受けることを推奨。抗体が低い場合に接種対象。"
   },
   {
     id:7,name:"インフルエンザ",sub:"（毎年接種）",
@@ -162,18 +172,6 @@ const V=[
       target:"65歳以上 / 60〜64歳で重篤な基礎疾患のある方",
       period:"秋冬（時期は厚労省告示による）",cost:"自己負担 3,000〜7,000円程度",note:"令和6年度より定期接種に移行。対象外は自費15,000円"},
     memo:"定期接種対象外は自費15,000円。最新株対応ワクチンを使用。"
-  },
-  {
-    id:8,name:"MRワクチン（風しん・麻しん）",sub:"",
-    tags:"風疹 麻疹 はしか 風しん 麻しん rubella measles MR",
-    price:7000,pnote:"1回",appt:true,
-    subsidy:{yes:true,
-      target:"①妊娠希望者（妊婦除く）②妊娠希望者・妊婦の配偶者／同居者　※福岡市在住・風しん抗体が低い方",
-      period:"令和8年4月1日〜令和9年3月31日",
-      cost:"MR混合：自己負担 3,000円 ／ 風しん単独：2,000円",
-      note:"風しん抗体検査は無料 ／ 助成は1人1回限り",
-      caution:"⚠️ 当院は混合（MR）のみ取り扱い　風しん単体ワクチンは扱いなし"},
-    memo:"接種前に風しん抗体検査（無料）を受けることを推奨。抗体が低い場合に接種対象。"
   },
   {
     id:9,name:"水痘（みずぼうそう）",sub:"生ワクチン",
@@ -209,6 +207,13 @@ const V=[
     price:7000,pnote:"1回",appt:true,
     subsidy:{yes:false,note:"成人への助成なし（小児定期接種のみ）"},
     memo:"東南アジア渡航者・農村部在住者に推奨。"
+  },
+  {
+    id:6,name:"RSウイルスワクチン",sub:"（アブリスボ等）",
+    tags:"RS RSウイルス 呼吸器 気管支炎 アブリスボ",
+    price:25000,pnote:"1回",appt:true,
+    subsidy:{yes:false,note:"助成なし（自費のみ）"},
+    memo:"高齢者に推奨。1回接種。"
   }
 ];
 
@@ -292,7 +297,7 @@ function herpesCompare(){
 }
 
 function render(){
-  const q=document.getElementById('srch').value.toLowerCase();
+  const q='';
   let list=V.filter(v=>(v.name+v.sub+(v.tags||'')).toLowerCase().includes(q));
   if(flt==='sub') list=list.filter(v=>v.subsidy.yes);
   if(flt==='appt') list=list.filter(v=>v.appt);
@@ -325,6 +330,34 @@ function render(){
         <hr class="div">
         <div class="memo">ℹ️ ${v.memo}</div>
         ${(v.isHerpes||v.isHerpesBiken)?herpesCompare():''}
+        ${v.isHPV?`<div style="margin-top:8px;padding:10px 12px;background:#F0EAF8;border-radius:8px;font-size:12px;color:#4B1A7B;line-height:1.8">
+          <div style="font-weight:700;margin-bottom:8px;font-size:13px">📋 接種スケジュール（シルガード9）</div>
+          <div style="background:#E8F5E3;border-radius:8px;padding:8px 10px;margin-bottom:6px;border-left:4px solid #4CAF50">
+            <div style="font-weight:700;color:#2E7D32;margin-bottom:4px">🟢 合計2回｜1回目を15歳になるまでに受ける場合</div>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span style="background:#388E3C;color:#fff;border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0">1回目</span>
+              <span style="color:#555;font-size:13px">━━━━ 5か月以上あける ━━━━</span>
+              <span style="background:#388E3C;color:#fff;border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0">2回目</span>
+              <span style="font-weight:700;color:#2E7D32">✅ 完了</span>
+            </div>
+            <div style="font-size:11px;color:#555;margin-top:4px">※ 5か月未満になった場合は3回接種が必要</div>
+          </div>
+          <div style="background:#FFF8E1;border-radius:8px;padding:8px 10px;border-left:4px solid #FFA000">
+            <div style="font-weight:700;color:#E65100;margin-bottom:4px">🟡 合計3回｜1回目を15歳になってから受ける場合</div>
+            <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+              <span style="background:#388E3C;color:#fff;border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0">1回目</span>
+              <span style="color:#555;font-size:11px">─2か月後─</span>
+              <span style="background:#388E3C;color:#fff;border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0">2回目</span>
+              <span style="color:#555;font-size:11px">─4か月後─</span>
+              <span style="background:#388E3C;color:#fff;border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0">3回目</span>
+              <span style="font-weight:700;color:#E65100">✅ 完了</span>
+            </div>
+            <div style="font-size:11px;color:#555;margin-top:4px">※ 所定タイミングが難しい場合：2回目は1回目から1か月以上、3回目は2回目から3か月以上あける</div>
+          </div>
+          <div style="margin-top:6px;font-size:11px;background:#E3F2FD;border-radius:6px;padding:5px 8px;color:#1565C0">
+            ⏱ いずれの場合も<strong>1年以内</strong>に規定回数の接種を終えることが望ましい
+          </div>
+        </div>`:''}
       </div>
       <div class="dtgl">▼ 詳細・メモを見る</div>
     </div>
