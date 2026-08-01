@@ -85,10 +85,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
   </div>
 
   <div class="controls">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="srch" placeholder="ワクチン名で検索..." oninput="render()">
-    </div>
     <button class="fb on" onclick="setF('all',this)">すべて</button>
     <button class="fb" onclick="setF('sub',this)">助成あり</button>
     <button class="fb" onclick="setF('appt',this)">要予約</button>
@@ -301,7 +297,7 @@ function herpesCompare(){
 }
 
 function render(){
-  const q=document.getElementById('srch').value.toLowerCase();
+  const q='';
   let list=V.filter(v=>(v.name+v.sub+(v.tags||'')).toLowerCase().includes(q));
   if(flt==='sub') list=list.filter(v=>v.subsidy.yes);
   if(flt==='appt') list=list.filter(v=>v.appt);
